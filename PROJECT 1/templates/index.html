@@ -54,7 +54,7 @@
         };
 
         try {
-          const response = await fetch("/predict", {
+          const response = await fetch("https://irismodel.vercel.app/predict", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
