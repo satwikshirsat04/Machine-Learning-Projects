@@ -3,3 +3,4 @@ Flask-Cors
 pandas
 gunicorn
 urllib3
+requests
