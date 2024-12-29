@@ -2,3 +2,4 @@ flask
 joblib
 requests
 numpy
+scikit-learn==0.24.2
