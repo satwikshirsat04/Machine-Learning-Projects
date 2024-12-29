@@ -1,15 +1,14 @@
 from flask import Flask, request, jsonify, render_template
-import pickle
+import joblib
 import numpy as np
 
 app = Flask(__name__)
 
 # Load your trained model
-model = pickle.load(open("dt.pkl", "rb"))
+model = joblib.load("dt.joblib")
 
 @app.route("/", methods=["GET"])
 def home():
-    """Serve the front-end HTML."""
     return render_template("index.html")
 
 @app.route("/predict", methods=["POST"])
