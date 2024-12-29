@@ -29,16 +29,6 @@ except Exception as e:
     print(f"Error loading model: {str(e)}")
     model = None  # Set to None to handle gracefully in prediction route
 
-@app.route("/favicon.ico", methods=["GET"])
-def favicon():
-    """Serve a placeholder favicon to avoid 500 errors for /favicon.ico requests."""
-    return send_from_directory(
-        os.path.join(app.root_path, "static"),
-        "favicon.ico",
-        mimetype="image/vnd.microsoft.icon",
-        as_attachment=False
-    )
-
 @app.route("/", methods=["GET"])
 def home():
     """Serve the front-end HTML."""
