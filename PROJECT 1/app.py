@@ -9,27 +9,27 @@ app = Flask(__name__)
 CORS(app)
 
 # Google Drive direct download link for your model
-# MODEL_URL = "https://drive.google.com/uc?export=download&id=1G-l98KCOcgPBNjmahkAUaIwr3-cspT_i"  # Replace with your link
+MODEL_URL = "https://drive.google.com/uc?export=download&id=1G-l98KCOcgPBNjmahkAUaIwr3-cspT_i"  # Replace with your link
 model_path = 'dt.pkl'
  # Temporary directory for serverless functions
 
 # Function to download the model if not already downloaded
-# def download_model():
-#     if not os.path.exists(MODEL_PATH):
-#         print("Downloading model...")
-#         urllib.request.urlretrieve(MODEL_URL, MODEL_PATH)
-#         print("Model downloadeded Successfully!.")
 def download_model():
-    file_id = '1G-l98KCOcgPBNjmahkAUaIwr3-cspT_i'  # Replace with your file's ID
-    url = f"https://drive.google.com/uc?export=download&id={file_id}"
+    if not os.path.exists(model_path):
+        print("Downloading model...")
+        urllib.request.urlretrieve(MODEL_URL, model_path)
+        print("Model downloadeded Successfully!.")
+# def download_model():
+#     file_id = '1G-l98KCOcgPBNjmahkAUaIwr3-cspT_i'  # Replace with your file's ID
+#     url = f"https://drive.google.com/uc?export=download&id={file_id}"
 
-    response = requests.get(url)
-    if response.status_code == 200:
-        with open(model_path, 'wb') as f:
-            f.write(response.content)
-        print("Model downloaded successfully.")
-    else:
-        raise Exception("Failed to download model from Google Drive.")
+#     response = requests.get(url)
+#     if response.status_code == 200:
+#         with open(model_path, 'wb') as f:
+#             f.write(response.content)
+#         print("Model downloaded successfully.")
+#     else:
+#         raise Exception("Failed to download model from Google Drive.")
 
 # Load the trained model
 try:
