@@ -1,3 +1,4 @@
 flask
-numpy
 joblib
+requests
+numpy
