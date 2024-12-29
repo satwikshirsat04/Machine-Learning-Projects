@@ -1,6 +1,2 @@
-Flask
-Flask-Cors
-pandas
-gunicorn
-urllib3
-requests
+Flask==2.3.2
+numpy==1.26.0
