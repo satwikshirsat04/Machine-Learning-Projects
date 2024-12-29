@@ -3,27 +3,41 @@ import pickle
 from flask_cors import CORS
 import pandas as pd
 import os
+import urllib.request
 
 app = Flask(__name__)
 CORS(app)
 
-# Load your trained model
+# Google Drive direct download link for your model
+MODEL_URL = "https://drive.google.com/uc?export=download&id=1G-l98KCOcgPBNjmahkAUaIwr3-cspT_i"  # Replace with your link
+MODEL_PATH = "/tmp/dt.pkl"  # Temporary directory for serverless functions
+
+# Function to download the model if not already downloaded
+def download_model():
+    if not os.path.exists(MODEL_PATH):
+        print("Downloading model...")
+        urllib.request.urlretrieve(MODEL_URL, MODEL_PATH)
+        print("Model downloaded.")
+
+# Load the trained model
 try:
-    model = pickle.load(open("dt.pkl", "rb"))  # Replace with your model file
+    download_model()
+    with open(MODEL_PATH, "rb") as f:
+        model = pickle.load(f)
     print("Model loaded successfully.")
-except FileNotFoundError:
-    print("Model file 'dt.pkl' not found. Ensure the file is in the correct directory.")
+except Exception as e:
+    print(f"Error loading model: {str(e)}")
     model = None  # Set to None to handle gracefully in prediction route
 
-# @app.route("/favicon.ico", methods=["GET"])
-# def favicon():
-#     """Serve a placeholder favicon to avoid 500 errors for /favicon.ico requests."""
-#     return send_from_directory(
-#         os.path.join(app.root_path, "static"),
-#         "favicon.ico",
-#         mimetype="image/vnd.microsoft.icon",
-#         as_attachment=False
-#     )
+@app.route("/favicon.ico", methods=["GET"])
+def favicon():
+    """Serve a placeholder favicon to avoid 500 errors for /favicon.ico requests."""
+    return send_from_directory(
+        os.path.join(app.root_path, "static"),
+        "favicon.ico",
+        mimetype="image/vnd.microsoft.icon",
+        as_attachment=False
+    )
 
 @app.route("/", methods=["GET"])
 def home():
