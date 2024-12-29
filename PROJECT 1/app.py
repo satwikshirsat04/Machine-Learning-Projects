@@ -9,25 +9,37 @@ app = Flask(__name__)
 CORS(app)
 
 # Google Drive direct download link for your model
-MODEL_URL = "https://drive.google.com/uc?export=download&id=1G-l98KCOcgPBNjmahkAUaIwr3-cspT_i"  # Replace with your link
-MODEL_PATH = "/tmp/dt.pkl"  # Temporary directory for serverless functions
+# MODEL_URL = "https://drive.google.com/uc?export=download&id=1G-l98KCOcgPBNjmahkAUaIwr3-cspT_i"  # Replace with your link
+model_path = 'dt.pkl'
+ # Temporary directory for serverless functions
 
 # Function to download the model if not already downloaded
+# def download_model():
+#     if not os.path.exists(MODEL_PATH):
+#         print("Downloading model...")
+#         urllib.request.urlretrieve(MODEL_URL, MODEL_PATH)
+#         print("Model downloadeded Successfully!.")
 def download_model():
-    if not os.path.exists(MODEL_PATH):
-        print("Downloading model...")
-        urllib.request.urlretrieve(MODEL_URL, MODEL_PATH)
-        print("Model downloaded.")
+    file_id = '1G-l98KCOcgPBNjmahkAUaIwr3-cspT_i'  # Replace with your file's ID
+    url = f"https://drive.google.com/uc?export=download&id={file_id}"
+
+    response = requests.get(url)
+    if response.status_code == 200:
+        with open(model_path, 'wb') as f:
+            f.write(response.content)
+        print("Model downloaded successfully.")
+    else:
+        raise Exception("Failed to download model from Google Drive.")
 
 # Load the trained model
 try:
-    download_model()
-    with open(MODEL_PATH, "rb") as f:
-        model = pickle.load(f)
+    if not os.path.exists(model_path):
+        download_model()  # Download model if not found
+    model = pickle.load(open(model_path, "rb"))  # Load the model after downloading
     print("Model loaded successfully.")
-except Exception as e:
-    print(f"Error loading model: {str(e)}")
-    model = None  # Set to None to handle gracefully in prediction route
+except FileNotFoundError:
+    print(f"Model file '{model_path}' not found. Ensure the file is in the correct directory.")
+    model = None   # Set to None to handle gracefully in prediction route
 
 @app.route("/", methods=["GET"])
 def home():
