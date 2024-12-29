@@ -2,4 +2,4 @@ Flask
 Flask-Cors
 pandas
 gunicorn
-scikit-learn-lite
+urllib3
