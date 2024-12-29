@@ -6,8 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Model Predictor</title>
   <link rel="stylesheet" href="/static/style.css">
-  <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
-
 
 </head>
 
@@ -54,7 +52,7 @@
         };
 
         try {
-          const response = await fetch("https://irismodel.vercel.app/predict", {
+          const response = await fetch("/predict", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -67,7 +65,7 @@
           }
 
           const result = await response.json();
-          resultDiv.innerHTML = `Prediction: ${result.prediction}`;
+          resultDiv.innerHTML = `Prediction = ${result.prediction}`;
         } catch (error) {
           resultDiv.innerHTML = `Error: ${error.message}`;
         }
