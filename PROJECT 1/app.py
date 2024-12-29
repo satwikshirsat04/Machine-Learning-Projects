@@ -1,39 +1,43 @@
-import os
-import pickle
-import requests
 from flask import Flask, request, jsonify, render_template, send_from_directory
+import pickle
 from flask_cors import CORS
+import pandas as pd
+import os
+import urllib.request
 
 app = Flask(__name__)
 CORS(app)
 
-# Define the Google Drive link to download the model
-model_url = "https://drive.google.com/uc?export=download&id=1G-l98KCOcgPBNjmahkAUaIwr3-cspT_i"
-model_filename = "dt.pkl"
+# Google Drive direct download link for your model
+MODEL_URL = "https://drive.google.com/uc?export=download&id=1G-l98KCOcgPBNjmahkAUaIwr3-cspT_i"  # Replace with your link
+MODEL_PATH = "/tmp/dt.pkl"  # Temporary directory for serverless functions
 
-# Function to download the model from Google Drive
+# Function to download the model if not already downloaded
 def download_model():
-    try:
-        response = requests.get(model_url)
-        if response.status_code == 200:
-            with open(model_filename, 'wb') as f:
-                f.write(response.content)
-            print(f"Model downloaded and saved as {model_filename}.")
-        else:
-            print(f"Failed to download model. Status code: {response.status_code}")
-    except Exception as e:
-        print(f"Error downloading model: {str(e)}")
+    if not os.path.exists(MODEL_PATH):
+        print("Downloading model...")
+        urllib.request.urlretrieve(MODEL_URL, MODEL_PATH)
+        print("Model downloaded.")
 
-# Try to load the model
+# Load the trained model
 try:
-    if not os.path.exists(model_filename):
-        download_model()  # Download model if it doesn't exist
-    model = pickle.load(open(model_filename, "rb"))
+    download_model()
+    with open(MODEL_PATH, "rb") as f:
+        model = pickle.load(f)
     print("Model loaded successfully.")
-except FileNotFoundError:
-    print(f"Model file '{model_filename}' not found. Ensure the file is downloaded and saved.")
+except Exception as e:
+    print(f"Error loading model: {str(e)}")
     model = None  # Set to None to handle gracefully in prediction route
 
+# @app.route("/favicon.ico", methods=["GET"])
+# def favicon():
+#     """Serve a placeholder favicon to avoid 500 errors for /favicon.ico requests."""
+#     return send_from_directory(
+#         os.path.join(app.root_path, "static"),
+#         "favicon.ico",
+#         mimetype="image/vnd.microsoft.icon",
+#         as_attachment=False
+#     )
 
 @app.route("/", methods=["GET"])
 def home():
@@ -66,7 +70,6 @@ def predict():
         processed_data = {feature_mapping[key]: value for key, value in data.items()}
 
         # Convert the processed data to a DataFrame
-        import pandas as pd
         df = pd.DataFrame([processed_data])
         print("Processed data for prediction:", df)
 
