@@ -7,4 +7,4 @@ TASKS:
 <br>
 PRIVATE:
 
-✔️Google Stock Price Graph Prediction using Deep Learning 📈
+✔️Stock Price Graph Prediction using Deep Learning 📈
